@@ -2,8 +2,12 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
+class PublisherManeger(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset()\
+            .filter(status=Post.Status.PUBLISHED)
+    
 class Post(models.Model):
-
     #Enum
     class Status (models.TextChoices):
         DRAFT = 'DF', 'Draft'
@@ -23,6 +27,9 @@ class Post(models.Model):
     status = models.CharField(max_length = 2,
                               choices = Status.choices, 
                               default = Status.DRAFT)
+    
+    objects = models.Manager()#default manager
+    published= PublisherManeger()#custom manager
 
     # latest post channxa ko lagi use bhako orderiing = publish
     #ani indexex le chai page number ni deko ani latest post lauda sabai check garnu bhanda index bta choose garnu sajilo hunxa 
