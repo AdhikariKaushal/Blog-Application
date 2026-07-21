@@ -73,7 +73,7 @@ def post_share(request, post_id):
             subject = f"{cd['name']} recommends you read"\
                         f"{post.title}"
             message = f"Read {post.title} at {post_url}\n\n" \
-                        f"{cd['name']} \ 's. comments:{cd['comments']}"
+                        f"{cd['name']}'s. comments:{cd['comments']}"
             send_mail(subject, message, settings.EMAIL_HOST_USER,
                       [cd['to']])
             sent = True
