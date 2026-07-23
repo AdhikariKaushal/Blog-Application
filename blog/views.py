@@ -1,11 +1,13 @@
 from django.shortcuts import render
-from .models import Post, Comment
+from .models import Post
+from comments.models import Comment
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.views.generic import ListView
-from .forms import EmailPostForm, CommentForm
+from .forms import EmailPostForm
+from comments.forms import CommentForm
 from django.core.mail import send_mail
 from django.conf import settings
 from django.views.decorators.http import require_POST
