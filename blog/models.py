@@ -3,6 +3,9 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
 
+#taggit for tags
+from taggit.managers import TaggableManager
+
 class PublisherManeger(models.Manager):
     def get_queryset(self):
         return super().get_queryset()\
@@ -50,3 +53,7 @@ class Post(models.Model):
                self.publish.month,
                self.publish.day,
                self.slug])
+
+
+    #tags
+    tags = TaggableManager()
