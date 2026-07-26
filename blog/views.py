@@ -11,22 +11,28 @@ from comments.forms import CommentForm
 from django.core.mail import send_mail
 from django.conf import settings
 from django.views.decorators.http import require_POST
+
+from taggit.models import Tag
  
 
-class PostListView(ListView):
+# class PostListView(ListView):
 
-    queryset = Post.published.all()
-    context_object_name = 'posts'
-    paginate_by = 3
-    template_name = 'blog/post/list.html'
+#     queryset = Post.published.all()
+#     context_object_name = 'posts'
+#     paginate_by = 3
+#     template_name = 'blog/post/list.html'
 
 
 #function based view for post_list
-''''
-def post_list(request):
+
+def post_list(request, tag_slug = None):
     #template context processors
     posts = Post.published.all()
 
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug = tag_slug)
+        posts = posts.filter(tags__in = [tag])
     #pagination with 3 posts per page
     paginator = Paginator(posts,3)
     page_number = request.GET.get('page',1)
@@ -41,8 +47,9 @@ def post_list(request):
         posts = paginator.page(paginator.num_pages)
     return render(request,
                   'blog/post/list.html',
-                  {'posts': posts})
-    '''
+                  {'posts': posts,
+                   'tag':tag})
+    
     
 def post_detail(request, year, month, day, post):
     # try:
