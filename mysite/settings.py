@@ -29,7 +29,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+#Added site id
+SITE_ID = 1
 # Application definition
 
 INSTALLED_APPS = [
@@ -44,6 +45,10 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'comments.apps.CommentsConfig',
     'taggit',
+
+    # used sitemaps
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
 ]
 
 MIDDLEWARE = [
