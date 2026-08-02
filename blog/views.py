@@ -149,7 +149,7 @@ def post_search(request):
             search_query = SearchQuery(query,)
             results = Post.published.annotate(
                 similarity=TrigramSimilarity('title', query),
-                ).filter(similarity__gte = 0.3).order_by('-similarity')
+                ).filter(similarity__gte = 0.1).order_by('-similarity')
 
     return render (request,
                    'blog/post/search.html',
