@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-import os
 from pathlib import Path
 
 from decouple import config
@@ -92,7 +91,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'blog',
         'USER': 'blog',
-        'PASSWORD' : os.getenv('DB_PASSWORD')
+        'PASSWORD' : config('DB_PASSWORD')
     }
 }
 
