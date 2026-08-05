@@ -142,3 +142,5 @@ EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
 
 #redirect after login to blog post
 LOGIN_REDIRECT_URL = 'blog:post_list'
+# logout redirect url added
+LOGOUT_REDIRECT_URL = 'blog:post_list'
