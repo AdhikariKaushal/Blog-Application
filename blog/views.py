@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .models import Post
 from comments.models import Comment
 from django.http import Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.views.generic import ListView
@@ -17,7 +17,10 @@ from django.db.models import Count
 
 from django.contrib.postgres.search import SearchVector,\
                                             SearchQuery, SearchRank, \
-                                            TrigramSimilarity
+                                           TrigramSimilarity
+
+from django.contrib.auth import login
+from .forms import SignUpForm 
 
 
  
@@ -156,6 +159,18 @@ def post_search(request):
                    {'form': form,
                     'query': query,
                     'results': results})
+
+#signup function
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('blog:post_list')
+    else:
+        form = SignUpForm()
+    return render(request, 'registration/signup.html', {'form': form})
 
     
 
