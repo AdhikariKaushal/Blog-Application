@@ -25,4 +25,6 @@ urlpatterns = [
      path('signup/', views.signup, name ='signup'),
      # creating a post 
      path('new/', views.post_create, name='post_create'),
-]   
+     # editing the post
+     path('<int:post_id>/edit/', views.post_edit, name='post_edit'),
+]    

@@ -177,6 +177,7 @@ def signup(request):
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
 
+#for creating posts
 @login_required
 def post_create(request):
     if request.method == 'POST':
@@ -191,6 +192,21 @@ def post_create(request):
         form = PostForm()
     return render(request, 'blog/post/form.html', {'form': form})
 
-    
-
+#for editing the posts
+@login_required
+def post_edit(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    # Only the author can edit their own post
+    if post.author != request.user:
+        raise Http404("You are not allowed to edit this post.")
+    if request.method == 'POST':
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.slug = slugify(post.title)
+            post.save()
+            return redirect(post.get_absolute_url())
+    else:
+        form = PostForm(instance=post)
+    return render(request, 'blog/post/form.html', {'form': form, 'post': post})
 
