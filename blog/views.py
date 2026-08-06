@@ -25,6 +25,7 @@ from .forms import SignUpForm
 from django.contrib.auth.decorators import login_required
 from .forms import PostForm
 
+from django.utils.text import slugify
 
 
  
@@ -183,6 +184,7 @@ def post_create(request):
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
+            post.slug = slugify(post.title)
             post.save()
             return redirect(post.get_absolute_url())
     else:
