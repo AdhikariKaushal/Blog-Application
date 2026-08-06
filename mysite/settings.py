@@ -50,7 +50,10 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
 
     #postgres
-    'django.contrib.postgres'
+    'django.contrib.postgres',
+
+    'rest_framework',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
