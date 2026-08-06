@@ -22,6 +22,10 @@ from django.contrib.postgres.search import SearchVector,\
 from django.contrib.auth import login
 from .forms import SignUpForm 
 
+from django.contrib.auth.decorators import login_required
+from .forms import PostForm
+
+
 
  
 
@@ -171,6 +175,19 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
+
+@login_required
+def post_create(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect(post.get_absolute_url())
+    else:
+        form = PostForm()
+    return render(request, 'blog/post/form.html', {'form': form})
 
     
 
