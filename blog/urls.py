@@ -23,4 +23,6 @@ urlpatterns = [
 
      #signup url
      path('signup/', views.signup, name ='signup'),
+     # creating a post 
+     path('new/', views.post_create, name='post_create'),
 ]   
