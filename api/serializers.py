@@ -2,6 +2,8 @@ from rest_framework import serializers
 from blog.models import Post
 
 class PostSerializer(serializers.ModelSerializer):
+    slug = serializers.SlugField(read_only = True)
+
     class Meta:
         model = Post
         fields = ['id', 'title', 'slug', 'author', 'body', 'publish', 'status']
