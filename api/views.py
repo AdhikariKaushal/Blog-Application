@@ -18,3 +18,10 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
 class PostDetailAPIView(generics.RetrieveAPIView):
     queryset = Post.published.all()
     serializer_class = PostSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def perform_update(self, serializer):
+        post = self.get_object()
+        if post.author != self.request.user:
+            raise PermissionDenied("Your are not allowed to edit this post.")
+        serializer.save()
