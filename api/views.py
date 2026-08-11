@@ -5,6 +5,8 @@ from .serializers import PostSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.utils.text import slugify
 from rest_framework.exceptions import PermissionDenied
+from comments.models import Comment
+from .serializers import CommentSerializer
 
 class PostListCreateAPIView(generics.ListCreateAPIView):
     queryset = Post.published.all()
@@ -30,3 +32,14 @@ class PostDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         if instance.author != self.request.user:
             raise PermissionDenied("You are not allowed to delete this post.")
         instance.delete()
+
+class CommentListCreateAPIView (generics.ListCreateAPIView):
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        post_id = self.kwargs['post_id']
+        return Comment.objects.filter(post_id=post_id, active = True)
+
+    def perform_create(self, serializer):
+        post_id = self.kwargs['post_id']
+        serializer.save(post_id=post_id)
