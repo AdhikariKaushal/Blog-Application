@@ -8,3 +8,4 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = ['id', 'title', 'slug', 'author', 'body', 'publish', 'status']
         read_only_fields = ['author', 'slug', 'publish']
+        validators = []
