@@ -7,11 +7,15 @@ from django.utils.text import slugify
 from rest_framework.exceptions import PermissionDenied
 from comments.models import Comment
 from .serializers import CommentSerializer
+from rest_framework.filters import SearchFilter
+
 
 class PostListCreateAPIView(generics.ListCreateAPIView):
     queryset = Post.published.all()
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [SearchFilter]
+    search_fields = ['title', 'body']
 
     def perform_create(self, serializer):
         title = serializer.validated_data.get('title')
