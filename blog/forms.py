@@ -22,5 +22,5 @@ class SignUpForm(UserCreationForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'body', 'status']
+        fields = ['title', 'body', 'status', 'image']
     
