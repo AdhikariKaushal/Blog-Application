@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'api.apps.ApiConfig',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -147,3 +148,7 @@ EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
 LOGIN_REDIRECT_URL = 'blog:post_list'
 # logout redirect url added
 LOGOUT_REDIRECT_URL = 'blog:post_list'
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
