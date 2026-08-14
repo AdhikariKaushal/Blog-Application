@@ -27,7 +27,7 @@ from .forms import PostForm
 
 from django.utils.text import slugify
 
-
+from django.db.models import Q
  
 
 # class PostListView(ListView):
@@ -41,15 +41,26 @@ from django.utils.text import slugify
 #function based view for post_list
 
 def post_list(request, tag_slug = None):
+    query = request.GET.get('query')
     #template context processors
     posts = Post.published.all()
-
     tag = None
-    if tag_slug:
-        tag = get_object_or_404(Tag, slug = tag_slug)
-        posts = posts.filter(tags__in = [tag])
+
+    if query:
+        search_vector = SearchVector('title', weight='A') + SearchVector('body', weight='B')
+        search_query = SearchQuery(query)
+        posts = posts.annotate(
+            rank=SearchRank(search_vector, search_query),
+            similarity=TrigramSimilarity('title', query),
+        ).filter(
+            Q(rank__gte=0.1) | Q(similarity__gte=0.1)
+        ).order_by('-rank', '-similarity')
+    elif tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        posts = posts.filter(tags__in=[tag])
+
     #pagination with 3 posts per page
-    paginator = Paginator(posts,3)
+    paginator = Paginator(posts,6)
     page_number = request.GET.get('page',1)
     #empty page error handled
     try:
@@ -141,7 +152,7 @@ def post_comment(request,post_id):
             'comment': comment
         })
 
-
+'''
 #search filter using postgres
 def post_search(request):
     form = SearchForm()
@@ -164,6 +175,7 @@ def post_search(request):
                    {'form': form,
                     'query': query,
                     'results': results})
+'''
 
 #signup function
 def signup(request):
@@ -187,7 +199,10 @@ def post_create(request):
             post.author = request.user
             post.slug = slugify(post.title)
             post.save()
-            return redirect(post.get_absolute_url())
+            form.save_m2m()  # saves the tags
+            if post.status == Post.Status.PUBLISHED:
+                return redirect(post.get_absolute_url())
+            return redirect('blog:my_posts')
     else:
         form = PostForm()
     return render(request, 'blog/post/form.html', {'form': form})
@@ -205,6 +220,7 @@ def post_edit(request, post_id):
             post = form.save(commit=False)
             post.slug = slugify(post.title)
             post.save()
+            form.save_m2m()
             return redirect(post.get_absolute_url())
     else:
         form = PostForm(instance=post)
@@ -221,4 +237,10 @@ def post_delete(request, post_id):
         post.delete()
         return redirect('blog:post_list')
     return render(request, 'blog/post/delete_confirm.html', {'post': post})
+
+
+@login_required
+def my_posts(request):
+    posts = Post.objects.filter(author=request.user).order_by('-publish')
+    return render(request, 'blog/post/my_posts.html', {'posts': posts})
 
