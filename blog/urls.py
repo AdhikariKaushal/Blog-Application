@@ -19,7 +19,7 @@ urlpatterns = [
      path('tag/<slug:tag_slug>/',
           views.post_list, name = 'post_list_by_tag'),
      path('feed/', LatestPostsFeed(), name = 'post_feed'),
-     path('search/', views.post_search, name = 'post_search'),
+     #path('search/', views.post_search, name = 'post_search'),
 
      #signup url
      path('signup/', views.signup, name ='signup'),
@@ -29,4 +29,5 @@ urlpatterns = [
      path('<int:post_id>/edit/', views.post_edit, name='post_edit'),
      #deleting the post
      path('<int:post_id>/delete/', views.post_delete, name='post_delete'),
+     path('my-posts/', views.my_posts, name='my_posts'),
 ]    
