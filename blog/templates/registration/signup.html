@@ -1,12 +1,59 @@
 {% extends "blog/base.html" %}
-
 {% block title %}Sign Up{% endblock %}
+{% block navbar %}{% endblock %}
+{% block sidebar %}{% endblock %}
 
 {% block content %}
-  <h1>Sign Up</h1>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Sign Up</button>
-  </form>
+<style>
+    .signup-page {
+        max-width: 380px;
+        margin: 20px auto;
+        text-align: center;
+    }
+    .signup-page h1 { font-size: 1.8rem; margin-bottom: 8px; }
+    .signup-page .subtitle { color: #6b6b6b; font-size: 0.9rem; margin-bottom: 32px; }
+    .signup-page form { text-align: left; }
+    .signup-page label { display: block; font-size: 0.85rem; color: #444; margin-bottom: 6px; font-weight: 500; }
+    .signup-page input[type="text"],
+    .signup-page input[type="email"],
+    .signup-page input[type="password"] {
+        width: 100%; padding: 12px 16px; border: 1px solid #ddd;
+        border-radius: 10px; margin-bottom: 14px; font-size: 0.95rem;
+        font-family: inherit; outline: none;
+    }
+    .signup-page input[type="text"]:focus,
+    .signup-page input[type="email"]:focus,
+    .signup-page input[type="password"]:focus {
+        border-color: #6c5ce7;
+    }
+    .signup-page .submit-btn {
+        width: 100%; background: #6c5ce7; color: white; border: none;
+        padding: 12px; border-radius: 10px; font-size: 0.95rem;
+        cursor: pointer; font-weight: 500;
+    }
+    .signup-page .submit-btn:hover { background: #5a4bd1; }
+    .signup-page ul.errorlist {
+        color: #e74c3c; font-size: 0.85rem; list-style: none; margin-bottom: 12px;
+        padding: 0;
+    }
+    .signup-page .login-link { margin-top: 24px; font-size: 0.9rem; color: #6b6b6b; }
+    .signup-page .login-link a { color: #6c5ce7; text-decoration: none; font-weight: 500; }
+</style>
+
+<div class="signup-page">
+    <h1>Create an account</h1>
+    <p class="subtitle">Sign up to start writing</p>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field.errors }}
+            {{ field }}
+        {% endfor %}
+        <button type="submit" class="submit-btn">Sign Up</button>
+    </form>
+    <p class="login-link">
+        Already have an account? <a href="{% url 'login' %}">Log in</a>
+    </p>
+</div>
 {% endblock %}
