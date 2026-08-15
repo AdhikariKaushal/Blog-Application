@@ -170,5 +170,10 @@ TINYMCE_DEFAULT_CONFIG = {
                "alignleft aligncenter alignright alignjustify | "
                "bullist numlist outdent indent | link image media table | "
                "removeformat code fullscreen help",
+    "color_map": [
+        "000000", "Black", "FF0000", "Red", "00FF00", "Green",
+        "0000FF", "Blue", "FFFF00", "Yellow", "FFA500", "Orange",
+        "800080", "Purple", "FFFFFF", "White"
+    ],
     "content_style": "body { font-family: Helvetica, Arial, sans-serif; font-size: 16px }",
 }
