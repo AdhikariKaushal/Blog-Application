@@ -55,6 +55,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'api.apps.ApiConfig',
     'drf_spectacular',
+    #text editor
+    'tinymce',
 ]
 
 MIDDLEWARE = [
