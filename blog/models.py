@@ -6,6 +6,8 @@ from django.urls import reverse
 #taggit for tags
 from taggit.managers import TaggableManager
 
+from tinymce.models import HTMLField
+
 class PublisherManeger(models.Manager):
     def get_queryset(self):
         return super().get_queryset()\
@@ -24,7 +26,7 @@ class Post(models.Model):
     author = models.ForeignKey(User,
                                on_delete = models.CASCADE,
                                related_name = 'blog_posts')
-    body = models.TextField()
+    body = HTMLField()
     image = models.ImageField(upload_to='post_images/%Y/%m/%d/', blank=True, null=True)
     publish = models.DateTimeField(default = timezone.now)
     created = models.DateTimeField(auto_now_add=True)
