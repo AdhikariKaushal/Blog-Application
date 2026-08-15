@@ -157,3 +157,18 @@ REST_FRAMEWORK = {
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+TINYMCE_DEFAULT_CONFIG = {
+    "height": "500px",
+    "width": "100%",
+    "menubar": "file edit view insert format tools table help",
+    "plugins": "advlist autolink lists link image charmap preview anchor "
+               "searchreplace visualblocks code fullscreen insertdatetime "
+               "media table paste code help wordcount",
+    "toolbar": "undo redo | blocks fontfamily fontsize | "
+               "bold italic underline strikethrough | forecolor backcolor | "
+               "alignleft aligncenter alignright alignjustify | "
+               "bullist numlist outdent indent | link image media table | "
+               "removeformat code fullscreen help",
+    "content_style": "body { font-family: Helvetica, Arial, sans-serif; font-size: 16px }",
+}
