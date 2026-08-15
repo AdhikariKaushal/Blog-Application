@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Post
+from tinymce.widgets import TinyMCE
 
 
 class EmailPostForm(forms.Form):
@@ -23,4 +24,7 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'body', 'status', 'image', 'tags']
+        widgets = {
+            'body' : TinyMCE(attrs={'cols' :80, 'rows':30}),
+        }
     
