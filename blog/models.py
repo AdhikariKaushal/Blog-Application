@@ -60,3 +60,14 @@ class Post(models.Model):
 
     #tags
     tags = TaggableManager()
+
+class Category(models.Model):
+    name = models.CharField(max_length= 100, unique=True)
+    slug = models.SlugField(max_Length=100, unique =True)
+
+    class Meta:
+        verbose_name_plural = 'Categories'
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
