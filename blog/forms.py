@@ -23,7 +23,7 @@ class SignUpForm(UserCreationForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'body', 'status', 'image', 'tags']
+        fields = ['title', 'body', 'status', 'image', 'tags', 'category']
         widgets = {
             'body' : TinyMCE(attrs={'cols' :80, 'rows':30}),
         }
