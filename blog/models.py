@@ -23,6 +23,7 @@ class Post(models.Model):
     title = models.CharField(max_length=250)
     #SEO friendly
     slug = models. SlugField(max_length = 250, unique_for_date= 'publish')
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='posts')
     author = models.ForeignKey(User,
                                on_delete = models.CASCADE,
                                related_name = 'blog_posts')
