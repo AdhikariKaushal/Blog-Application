@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Post
+from .models import Post, Category
 from comments.models import Comment
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
@@ -40,11 +40,12 @@ from django.db.models import Q
 
 #function based view for post_list
 
-def post_list(request, tag_slug = None):
+def post_list(request, tag_slug = None, category_slug = None):
     query = request.GET.get('query')
     #template context processors
     posts = Post.published.all()
     tag = None
+    category = None
 
     if query:
         search_vector = SearchVector('title', weight='A') + SearchVector('body', weight='B')
@@ -58,6 +59,9 @@ def post_list(request, tag_slug = None):
     elif tag_slug:
         tag = get_object_or_404(Tag, slug=tag_slug)
         posts = posts.filter(tags__in=[tag])
+    elif category_slug:
+        category = get_object_or_404(Category, slug=category_slug)
+        posts = posts.filter(category=category)
 
     #pagination with 3 posts per page
     paginator = Paginator(posts,6)
@@ -74,7 +78,8 @@ def post_list(request, tag_slug = None):
     return render(request,
                   'blog/post/list.html',
                   {'posts': posts,
-                   'tag':tag})
+                   'tag':tag,
+                   'category': category})
     
     
 def post_detail(request, year, month, day, post):
