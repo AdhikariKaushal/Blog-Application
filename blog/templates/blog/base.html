@@ -7,46 +7,68 @@
     <link href="{% static 'css/blog.css' %}" rel="stylesheet">
 </head>
 <body>
-    <div id="content">
+    <div class="page-wrapper">
+        {% block navbar %}
+        <div class="navbar">
+            <div class="logo">Blog Application</div>
+            <nav>
+                <a href="{% url 'blog:post_list' %}">Blog</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'blog:post_create' %}">New Post</a>
+                    <a href="{% url 'blog:my_posts' %}">My Posts</a>
+                {% endif %}
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="login-btn" style="border:none; cursor:pointer;">Log out</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="login-btn">Login</a>
+                {% endif %}
+            </nav>
+        </div>
+        {% if user.is_authenticated %}
+        <div class="user-strip">
+            <span class="user-badge-avatar">{{ user.username|slice:":1"|upper }}</span>
+            Logged in as <strong>{{ user.username }}</strong>
+        </div>
+        {% endif %}
+        {% endblock %}
+
         {% block content %}
         {% endblock %}
     </div>
+
+    {% block sidebar %}
     <div id="sidebar">
-        <h2>My blog</h2>
-        <p>
-            This is my blog. I've written {% total_posts %} posts so far.
-        </p>
+        <div class="sidebar-card">
+            <h3>About</h3>
+            <p>This is my blog. I've written {% total_posts %} posts so far.</p>
+            <a href="{% url 'blog:post_feed' %}" class="rss-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#6c5ce7">
+                    <path d="M4 11a9 9 0 0 1 9 9h-2a7 7 0 0 0-7-7v-2zm0-6a15 15 0 0 1 15 15h-2A13 13 0 0 0 4 7V5zm0 12a3 3 0 0 1 3 3H4v-3z"/>
+                </svg>
+                Subscribe to RSS feed
+            </a>
+        </div>
 
-        {% if user.is_authenticated %}
-            <p>Hi {{ user.username }}!</p>
-            <p><a href="{% url 'blog:post_create' %}">+ New Post</a></p>
-            <form method="post" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit">Log out</button>
-            </form>
-        {% else %}
-            <p>
-                <a href="{% url 'login' %}">Log in</a> |
-                <a href="{% url 'blog:signup' %}">Sign up</a>
-            </p>
-        {% endif %}
+        <div class="sidebar-card">
+            <h3>Latest posts</h3>
+            <ul class="sidebar-list">
+                {% show_latest_posts 3 %}
+            </ul>
+        </div>
 
-        <p>
-            <a href="{% url 'blog:post_feed' %}">Subscribe to my RSS feed</a>
-        </p>
-
-        <h3>Latest posts</h3>
-        {% show_latest_posts 3 %}
-
-        <h3>Most commented posts</h3>
-        {% get_most_commented_posts as most_commented_posts %}
-        <ul>
-            {% for post in most_commented_posts %}
-                <li>
-                    <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-                </li>
-            {% endfor %}
-        </ul>
+        <div class="sidebar-card">
+            <h3>Most discussed</h3>
+            <ul class="sidebar-list">
+                {% get_most_commented_posts as most_commented_posts %}
+                {% for post in most_commented_posts %}
+                    <li><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
+    {% endblock %}
 </body>
 </html>
