@@ -1,53 +1,130 @@
 {% extends "blog/base.html" %}
 {% load blog_tags %}
-
 {% block title %}{{ post.title }}{% endblock %}
+
 {% block content %}
- <h1>{{ post.title }}</h1>
-{% if user == post.author %}
-  <p>
-    <a href="{% url 'blog:post_edit' post.id %}">Edit</a> |
-    <a href="{% url 'blog:post_delete' post.id %}">Delete</a>
-  </p>
-{% endif %}
-{% if user == post.author %}
-  <p>
-    <a href="{% url 'blog:post_edit' post.id %}">Edit</a> |
-    <a href="{% url 'blog:post_delete' post.id %}">Delete</a>
-  </p>
-{% endif %}
- <p class="date">
- Published {{ post.publish }} by {{ post.author }}
- </p>
- {{ post.body|linebreaks }}
- <p>
-    <a href="{% url "blog:post_share" post.id %}">
-        Share this post
-     </a>
-  <h2>Similar posts</h2>
-  {% for post in similar_posts %}
-    <p>
-      <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
-    </p>
-  {% empty %}
- There are no similar posts yet.
- {% endfor %}
- </p>
- {% with comments.count as total_comments %}
-  <h2>
-    {{ total_comments }} comment{{ total_comments|pluralize }}
-  </h2>
-{% endwith %}
-{% for comment in comments %}
-  <div class="comment">
-    <p class="info">
-      Comment {{ forloop.counter }} by {{ comment.name }}
-      {{ comment.created }}
-    </p>
-    {{ comment.body|linebreaks }}
-  </div>
-{% empty %}
-  <p>There are no comments.</p>
-{% endfor %}
-{% include "blog/post/includes/comment_form.html"%}
+<style>
+    .detail-wrapper { max-width: 720px; margin: 0 auto; }
+    .detail-wrapper .badge { display:inline-block; background:#6c5ce7; color:#fff; font-size:0.75rem; padding:4px 14px; border-radius:20px; margin-bottom:20px; }
+    .detail-wrapper h1 { font-size: 2.4rem; line-height:1.2; margin-bottom: 20px; }
+    .detail-meta { display:flex; align-items:center; gap:10px; color:#6b6b6b; font-size:0.9rem; margin-bottom:32px; }
+    .detail-meta .avatar { width:32px; height:32px; border-radius:50%; background:#f4b942; color:#fff; display:inline-flex; align-items:center; justify-content:center; font-weight:bold; font-size:0.85rem; }
+    .detail-hero { width:100%; max-height:480px; object-fit:cover; border-radius:16px; margin-bottom:32px; }
+    .detail-body { text-align:left; font-size:1.05rem; color:#2a2a2a; line-height:1.8; }
+    .detail-body p { margin-bottom: 18px; }
+
+    .action-row {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 32px 0;
+    }
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 18px;
+        border-radius: 20px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        background: #f4f2fd;
+        color: #6c5ce7;
+        transition: background 0.2s;
+    }
+    .action-btn:hover { background: #e6e2fb; }
+    .action-btn.delete { background: #fdeeed; color: #e74c3c; }
+    .action-btn.delete:hover { background: #fbdddb; }
+    .action-btn.share { background: #eef7f0; color: #2f9e5c; }
+    .action-btn.share:hover { background: #dcf0e0; }
+
+    .section-title { text-align:left; font-size:1.3rem; margin: 48px 0 20px; padding-top:32px; border-top:1px solid #eee; }
+    .similar-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:16px; text-align:left; }
+    .similar-grid a { display:block; padding:14px 18px; background:#f8f8f8; border-radius:10px; color:#1a1a1a; text-decoration:none; font-weight:500; font-size:0.9rem; }
+    .similar-grid a:hover { background:#f0eefd; color:#6c5ce7; }
+
+    .comment { text-align:left; padding:18px 0; border-bottom:1px solid #eee; }
+    .comment .info { font-size:0.85rem; color:#6b6b6b; margin-bottom:6px; }
+    .comment .info strong { color:#1a1a1a; }
+
+    .comment-form-wrapper { text-align:left; margin-top:24px; }
+    .comment-form-wrapper input[type="text"],
+    .comment-form-wrapper input[type="email"],
+    .comment-form-wrapper textarea {
+        width:100%; padding:12px 16px; border:1px solid #ddd; border-radius:10px;
+        margin-bottom:14px; font-family:inherit; font-size:0.95rem; outline:none;
+    }
+    .comment-form-wrapper input:focus, .comment-form-wrapper textarea:focus { border-color:#6c5ce7; }
+    .comment-form-wrapper input[type="submit"] {
+        background:#6c5ce7; color:#fff; border:none; padding:10px 28px;
+        border-radius:20px; cursor:pointer; font-size:0.9rem; font-weight:500;
+    }
+    .comment-form-wrapper input[type="submit"]:hover { background:#5a4bd1; }
+</style>
+
+<div class="detail-wrapper">
+    {% if post.category %}
+        <a href="{% url 'blog:post_list_by_category' post.category.slug %}" class="badge" style="text-decoration:none;">{{ post.category.name }}</a>
+    {% endif %}
+
+    <h1>{{ post.title }}</h1>
+
+    <div class="detail-meta">
+        <span class="avatar">{{ post.author.username|slice:":1"|upper }}</span>
+        {{ post.author.username }} &nbsp;|&nbsp; {{ post.publish|date:"d F Y" }}
+    </div>
+
+    {% if post.image %}
+        <img src="{{ post.image.url }}" alt="{{ post.title }}" class="detail-hero">
+    {% endif %}
+
+    <div class="detail-body">
+        {{ post.body|safe }}
+    </div>
+
+    <div class="action-row">
+        {% if user == post.author %}
+            <a href="{% url 'blog:post_edit' post.id %}" class="action-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                Edit
+            </a>
+            <a href="{% url 'blog:post_delete' post.id %}" class="action-btn delete">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                Delete
+            </a>
+        {% endif %}
+        <a href="{% url "blog:post_share" post.id %}" class="action-btn share">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Share
+        </a>
+    </div>
+
+    <h2 class="section-title">Similar posts</h2>
+    {% if similar_posts %}
+        <div class="similar-grid">
+            {% for post in similar_posts %}
+                <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="text-align:left; color:#6b6b6b;">There are no similar posts yet.</p>
+    {% endif %}
+
+    {% with comments.count as total_comments %}
+        <h2 class="section-title">{{ total_comments }} comment{{ total_comments|pluralize }}</h2>
+    {% endwith %}
+
+    {% for comment in comments %}
+        <div class="comment">
+            <p class="info"><strong>{{ comment.name }}</strong> &nbsp;·&nbsp; {{ comment.created|date:"d M Y, H:i" }}</p>
+            {{ comment.body|linebreaks }}
+        </div>
+    {% empty %}
+        <p style="text-align:left; color:#6b6b6b;">There are no comments yet. Be the first to share your thoughts.</p>
+    {% endfor %}
+
+    <div class="comment-form-wrapper">
+        {% include "blog/post/includes/comment_form.html" %}
+    </div>
+</div>
 {% endblock %}
