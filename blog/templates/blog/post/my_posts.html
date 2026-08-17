@@ -1,0 +1,33 @@
+{% extends "blog/base.html" %}
+{% block title %}My Posts{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>My Posts</h1>
+    <p>All your posts, including drafts.</p>
+</div>
+
+<div class="post-grid">
+    {% for post in posts %}
+        <div class="post-card">
+            <div class="card-image-wrap">
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                {% else %}
+                    <img src="https://placehold.co/400x200" alt="No image">
+                {% endif %}
+                {% if post.status == 'DF' %}
+                    <span class="card-badge-overlay" style="background:#999;">Draft</span>
+                {% endif %}
+            </div>
+            <h2>
+                <a href="{% url 'blog:post_edit' post.id %}">{{ post.title }}</a>
+            </h2>
+            <p class="excerpt">{{ post.body|striptags|truncatewords:20 }}</p>
+            <div class="post-meta">Last updated {{ post.updated|date:"d F Y" }}</div>
+        </div>
+    {% empty %}
+        <p>You haven't written any posts yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}
