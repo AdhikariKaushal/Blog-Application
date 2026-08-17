@@ -30,4 +30,5 @@ urlpatterns = [
      #deleting the post
      path('<int:post_id>/delete/', views.post_delete, name='post_delete'),
      path('my-posts/', views.my_posts, name='my_posts'),
+     path('category/<slug:category_slug>/', views.post_list, name='post_list_by_category'),
 ]    
