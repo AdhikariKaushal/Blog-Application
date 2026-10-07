@@ -40,11 +40,17 @@
                 {% endif %}
             </div>
             <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
-            <p class="excerpt">{{ post.body|striptags | truncatewords:20 }}</p>
+            <p class="excerpt">{{ post.body|striptags|truncatewords:20 }}</p>
             <div class="post-meta">
                 <span class="avatar">{{ post.author.username|slice:":1"|upper }}</span>
                 {{ post.author.username }} &nbsp;|&nbsp; {{ post.publish|date:"d F Y" }}
             </div>
+        </div>
+    {% empty %}
+        <div class="empty-state">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <h3>No posts found</h3>
+            <p>{% if query %}Nothing matched "{{ query }}". Try a different search.{% else %}Nothing here yet.{% endif %}</p>
         </div>
     {% endfor %}
 </div>

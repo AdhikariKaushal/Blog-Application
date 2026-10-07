@@ -4,6 +4,8 @@
 <html>
 <head>
     <title>{% block title %}{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="{% static 'css/blog.css' %}" rel="stylesheet">
 </head>
 <body>
@@ -51,14 +53,12 @@
                 Subscribe to RSS feed
             </a>
         </div>
-
         <div class="sidebar-card">
             <h3>Latest posts</h3>
             <ul class="sidebar-list">
                 {% show_latest_posts 3 %}
             </ul>
         </div>
-
         <div class="sidebar-card">
             <h3>Most discussed</h3>
             <ul class="sidebar-list">
@@ -70,5 +70,9 @@
         </div>
     </div>
     {% endblock %}
+
+    <footer class="site-footer">
+        <p>© {% now "Y" %} Blog Application built with Django</p>
+    </footer>
 </body>
 </html>
